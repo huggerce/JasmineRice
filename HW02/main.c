@@ -3,7 +3,7 @@
 #include <math.h>
 #include <time.h>
 
-#include "functions.h"
+#include "functions.c"
 
 int main (int argc, char **argv) {
 
@@ -31,12 +31,30 @@ int main (int argc, char **argv) {
   int p;
 
   /* Q2.2: Use isProbablyPrime and randomXbitInt to find a random n-bit prime number */
+	// prime number must be at least 2^(n-1) but no greater than 2^n
+	p = randXbitInt(n);
+	while(isProbablyPrime(p) != 1)
+	{
+		p = randXbitInt(n);
+	}
+	
 
   printf("p = %u is probably prime.\n", p);
 
   /* Q3.2: Use isProbablyPrime and randomXbitInt to find a new random n-bit prime number 
      which satisfies p=2*q+1 where q is also prime */
   int q;
+  q = randXbitInt(n-1);
+  p = 4;
+  while(isProbablyPrime(p) != 1)
+  {
+  	q = randXbitInt(n-1);
+  	while(isProbablyPrime(q) != 1)
+  	{
+  		q = randXbitInt(n-1);
+  	}
+  	p = 2*q + 1;
+  }
 
 	printf("p = %u is probably prime and equals 2*q + 1. q= %u and is also probably prime.\n", p, q);  
 

@@ -1,17 +1,57 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
 #include "functions.h"
 
+
+
 //compute a*b mod p safely
-unsigned int modprod(unsigned int a, unsigned int b, unsigned int p) {
+unsigned int modProd(unsigned int a, unsigned int b, unsigned int p) {
   /* Q1.2: Complete this function */
+
+	unsigned int za = a%p;
+	unsigned int ab = 0;
+
+	while(b > 0)
+	{
+		//check if b is odd
+		if (b % 2 == 1)
+			ab = (ab + a) % p;
+		//otherwise
+		a = (a*2) % p;
+		b = b / 2;
+	}
+	return ab % p;
+	
 }
 
 //compute a^b mod p safely
 unsigned int modExp(unsigned int a, unsigned int b, unsigned int p) {
   /* Q1.3: Complete this function */
+
+	unsigned int z = a;
+	unsigned int aExpb = 1;
+	z = z%p;
+	while(b>0)
+	{
+		//check if b is odd
+		if (b % 2 == 1)
+		{
+			aExpb = modProd(aExpb, z, p);
+			//(aExpb * a) % p;
+		}
+		
+		b = b/2;
+		z = modProd(z,z,p);
+		//(a*a) % p;
+		
+		//if(b_i == 1) aExpb = modProd(aExpb, z, p);
+		//z = modProd(z,z,p);
+		
+	}
+	return aExpb;
 }
 
 //returns either 0 or 1 randomly
@@ -27,6 +67,29 @@ unsigned int randXbitInt(unsigned int n) {
   }
   return r;
 }
+
+
+
+
+
+
+// make an array of small prime numbers
+// find r and d such that n-1 = (2^r) * d where d is odd
+// miller rabin
+// for all k in small prime list
+// x = modExp(a,d,n)
+// if x == 1 or x == n-1
+	// continue to next k
+// for i =1 to r-1
+	// x = modProd(x,x,n)
+	// if (x==1) return false
+	// if (x==n-1) continue to next k
+//return false
+//return true
+
+
+
+
 
 //tests for primality and return 1 if N is probably prime and 0 if N is composite
 unsigned int isProbablyPrime(unsigned int N) {
@@ -65,14 +128,80 @@ unsigned int isProbablyPrime(unsigned int N) {
   //if we're testing a large number switch to Miller-Rabin primality test
   /* Q2.1: Complete this part of the isProbablyPrime function using the Miller-Rabin pseudo-code */
   unsigned int r,d;
-
-  for (unsigned int n=0;n<NsmallPrimes;n++) {
+  unsigned int current, i, x;
   
+  current = N;
+  i = 0;
+  d = 1;
+  unsigned int checker = 0;
+  //1 will equal true which means done
+  //0 will equal false which means not done
+  while(checker == 0){
+  	if(current == 2) 
+  	{
+  		checker = 1;
+  		d = current;
+  		r = i+1;
+  	}
+  	if(current % 2 == 1) 
+  	{
+  		d = current;
+  		checker = 1;
+  		r = i;
+  	}
+  	current = current / 2;
+  	i = i+1;
+  }
+
+	for(unsigned int k=0; k<NsmallPrimes; k++) 
+	{
+			
+			x = modExp(smallPrimeList[k], d, N);
+			if( x == 1 || x == N-1)
+			{
+				continue;
+			}
+			
+			for(int i; i< r-1; i++)
+			{
+				unsigned int x = modProd(x, x, N);
+				if(x==1) return 0;
+				if(x==N-1)
+				{
+					continue;
+				}
+			}
+			
+	}
+	return 1;
+	
+	
+  {  
+  	for (unsigned int n=0;n<NsmallPrimes;n++) {
+  		x = modProd(x,x,n);
+  		if(x ==1) return 0;
+  
+  	}
+  	return 0;
   }
   return 1; //true
 }
 
 //Finds a generator of Z_p using the assumption that p=2*q+1
+//its either 2 or q
 unsigned int findGenerator(unsigned int p) {
   /* Q3.3: complete this function and use the fact that p=2*q+1 to quickly find a generator */
+  unsigned int q = (p-1)/2;
+  for (int g=2;g<p;g++) {
+  	if(modExp(g,2,p) != 1 && modExp(g,q,p) != 1)
+  	{
+  		if(modExp(g, p-1, p) == 1) return g;
+  	} 
+  	
+  }
+  
+  
+  
+  
+  
 }
