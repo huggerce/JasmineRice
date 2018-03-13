@@ -64,6 +64,7 @@ int main(int argc, char **argv) {
 	
 	double endTime = omp_get_wtime();
   free(drandData);
-  
+  printf("Total time is %g \n", endTime - startTime);
+ 
   return 0;
 }
