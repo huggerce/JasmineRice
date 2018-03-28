@@ -13,7 +13,7 @@ module load gcc
 
 make
 
-for Nthreads in `seq 1 16`
+for Nthreads in `seq 1 20`
 do 
     ./mandelbrot 4096 4096 $Nthreads;
 done;
