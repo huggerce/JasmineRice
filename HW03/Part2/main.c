@@ -27,9 +27,10 @@ int main (int argc, char **argv) {
     broadcast the public key information */
 	if(rank == 0)
 	{
-  	printf("Enter a number of bits: "); fflush(stdout);
-  	char status = scanf("%u",&n);
-
+	//comment this so i can do parallel
+  	//printf("Enter a number of bits: "); fflush(stdout);
+  	//char status = scanf("%u",&n);
+	n = 4;
   	//make sure the input makes sense
   	if ((n<3)||(n>31)) {//Updated bounds. 2 is no good, 31 is actually ok
     	printf("Unsupported bit size.\n");
