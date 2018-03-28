@@ -25,23 +25,30 @@ int main (int argc, char **argv) {
 
   /* Q3.1 Make rank 0 setup the ELGamal system and
     broadcast the public key information */
-  printf("Enter a number of bits: "); fflush(stdout);
-  char status = scanf("%u",&n);
+	if(rank == 0)
+	{
+  	printf("Enter a number of bits: "); fflush(stdout);
+  	char status = scanf("%u",&n);
 
-  //make sure the input makes sense
-  if ((n<3)||(n>31)) {//Updated bounds. 2 is no good, 31 is actually ok
-    printf("Unsupported bit size.\n");
-    return 0;   
-  }
-  printf("\n");
-
+  	//make sure the input makes sense
+  	if ((n<3)||(n>31)) {//Updated bounds. 2 is no good, 31 is actually ok
+    	printf("Unsupported bit size.\n");
+    	return 0;   
+  	}
+  	printf("\n");
+	}
   //declare storage for an ElGamal cryptosytem
   unsigned int p, g, h, x;
 
-  //setup an ElGamal cryptosystem
-  setupElGamal(n,&p,&g,&h,&x);
+	if(rank == 0)
+	{
+  	//setup an ElGamal cryptosystem
+  	setupElGamal(n,&p,&g,&h,&x);
+	}
 
-
+	MPI_Bcast(&p, 1, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+	MPI_Bcast(&g, 1, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+	MPI_Bcast(&h, 1, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
 
   //Suppose we don't know the secret key. Use all the ranks to try and find it in parallel
   if (rank==0)
@@ -52,16 +59,35 @@ int main (int argc, char **argv) {
      distributed amounst the MPI ranks  */
   unsigned int N = p-1; //total loop size
   unsigned int start, end;
-  
+  unsigned int threadNum = 0;
   start = 0; 
-  end = start + N;
-
-  //loop through the values from 'start' to 'end'
-  for (unsigned int i=start;i<end;i++) {
-    if (modExp(g,i+1,p)==h)
-      printf("Secret key found! x = %u \n", i+1);
+  end = start + (N/size); //instead of +N
+  double startTime;
+	startTime = MPI_Wtime();
+	while(end != N)
+	{
+		if(threadNum < (N%size))
+		{
+			end = end + 1;
+		}
+		if(rank == threadNum)
+		{
+		 
+			//loop through the values from 'start' to 'end'
+  		for (unsigned int i=start;i<end;i++) {
+    		if (modExp(g,i+1,p)==h)
+    		  printf("Secret key found! x = %u \n", i+1);
+  		}
+		}
+		threadNum = threadNum + 1;
+		start = end + 1;
+		end = start + (N/size);
+  	
   }
-
+  double endTime = MPI_Wtime();
+  // print elapsed time
+  printf("runtime = %f\n", endTime-startTime);
+  printf("throughput = %f\n", (N-start)/(endTime-startTime));
   MPI_Finalize();
 
   return 0;

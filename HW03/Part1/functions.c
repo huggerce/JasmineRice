@@ -123,6 +123,20 @@ void setupElGamal(unsigned int n, unsigned int *p, unsigned int *g,
                                   unsigned int *h, unsigned int *x) {
 
   /* Q1.1 Setup an ElGamal cryptographic system */
+	//Alice chooses a prime number p
+	unsigned int num = randXbitInt(n);
+	while(isProbablyPrime(num) != 1) // keeps going until num is prime
+	{
+		num = randXbitInt(n);
+	}
+	*p = num; //assigns the now prime number to p
+	//Alice selects a generator of the group Zp
+	*g = findGenerator(*p);
+	//Alice chooses in secret a number x in Zp, and computes h = g^x
+	*x = randXbitInt(n)%*p;
+	*h = modExp(*g, *x, *p);
+	//Alice publishes the set (p,g,h) as her public key and retains x as her secret key
+	
   
   printf("ElGamal Setup successful.\n");
   printf("p = %u. \n", *p);  
@@ -136,10 +150,26 @@ void ElGamalEncrypt(unsigned int *m, unsigned int *a,
                     unsigned int p, unsigned int g, unsigned int h) {
 
   /* Q2.1 Implement the encryption routine for an ElGamal cryptographic system */
+  //Bob chooses a random y in Zp
+  unsigned int y = rand()%p;
+  //Bob computes a = g^y and s = h^y
+  *a = modExp(g, y, p);
+  unsigned int s = modExp(h, y, p);
+  //Bob computes the cyphertext mHat = ms
+  *m = modprod(*m, s, p);
 }
 
 void ElGamalDecrypt(unsigned int *m, unsigned int a, 
                     unsigned int p, unsigned int x) {
 
   /* Q2.2 Implement the decryption routine for an ElGamal cryptographic system */
+  //Alice uses her secret key x to compute the shared secret s = a^x = g^(xy)
+  unsigned int s = modExp(a, x, p);
+  //Alice computes s^-1 = s^(p-2)
+  unsigned int sInverse = modExp(s, (p-2), p);
+  //Alice decrypts the intended message as mHat*s^-1 = m*s*s^-1 = m
+  
+  *m = modprod(*m, sInverse, p);
+  
+  
 }
