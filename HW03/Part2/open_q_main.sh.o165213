@@ -1,0 +1,17 @@
+mpicc -I./. -O3 -g -o main.o -lm -c main.c
+mpicc -I./. -O3 -g -o functions.o -lm -c functions.c
+mpicc  ././main.o ././functions.o -I./. -O3 -g -o main -lm
+mpiexec: Error: unknown option "-3"
+Type 'mpiexec --help' for usage.
+mpiexec: Error: unknown option "-3"
+Type 'mpiexec --help' for usage.
+mpiexec: Error: unknown option "-3"
+Type 'mpiexec --help' for usage.
+mpiexec: Error: unknown option "-3"
+Type 'mpiexec --help' for usage.
+mpiexec: Error: unknown option "-3"
+Type 'mpiexec --help' for usage.
+mpiexec: Error: unknown option "-3"
+Type 'mpiexec --help' for usage.
+mpiexec: Error: unknown option "-3"
+Type 'mpiexec --help' for usage.
