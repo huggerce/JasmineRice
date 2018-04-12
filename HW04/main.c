@@ -9,7 +9,7 @@
 
 int main (int argc, char **argv) {
 
-  int Nthreads = 1;
+  int Nthreads = 20;
 
   omp_set_num_threads(Nthreads);
 
