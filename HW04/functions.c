@@ -213,17 +213,6 @@ void padString(unsigned char* string, unsigned int charsPerInt) {
 		//term = '\0';
 		string[lengthStr+charsPerInt] = '\0';
 	}
-
-//	int lengthStr = strlen(string);
-//	int divide = lengthStr/charsPerInt;
-//	
-//	int finish = (divide + 1)*charsPerInt;
-//	
-//
-//	for(int i = lengthStr; i < finish; i++)
-//	{
-//		string[i] = ' ';	
-//	}
 	
 }
 
@@ -250,7 +239,7 @@ void convertStringToZ(unsigned char *string, unsigned int Nchars,
   	}
   }
   
-  //printf("%d \n", Z[1]);
+ 
   /* Q2.2 Parallelize this function with OpenMP   */
 
 }
